@@ -16,20 +16,23 @@ class State:
     return count
 
   def is_win(self, pieces):
-    def is_comp(x,y,dx,dy):
-      for k in range(3):
-        if y < 0 or 2 < y or x < 0 or 2 < x or \
-          pieces[x+y*3] == 0:
-          return False
-        x , y = x+dx , x+dy
+    if pieces[0] == 1 and pieces[1] == 1 and pieces[2] == 1:
       return True
-    if is_comp(0,0,1,1) or is_comp(0,2,1,-1):
+    if pieces[3] == 1 and pieces[4] == 1 and pieces[5] == 1:
       return True
-    for i in range(3):
-      if is_comp(0,i,1,0) or is_comp(i,0,0,1):
-        return True
-    return False  
-
+    if pieces[6] == 1 and pieces[7] == 1 and pieces[8] == 1:
+      return True
+    if pieces[0] == 1 and pieces[3] == 1 and pieces[6] == 1:
+      return True
+    if pieces[1] == 1 and pieces[4] == 1 and pieces[7] == 1:
+      return True
+    if pieces[2] == 1 and pieces[5] == 1 and pieces[8] == 1:
+      return True
+    if pieces[0] == 1 and pieces[4] == 1 and pieces[8] == 1:
+      return True
+    if pieces[2] == 1 and pieces[4] == 1 and pieces[6] == 1:
+      return True
+    return False
   def is_draw(self):
     return self.piece_count(self.pieces) + self.piece_count\
       (self.enemy_pieces) == 9

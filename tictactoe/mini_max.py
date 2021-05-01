@@ -1,3 +1,4 @@
+import sys
 import copy
 class Tree:
   def __init__(self, value,move):
@@ -19,16 +20,18 @@ class Tree:
 class Mini_max:
   def __init__(self,board):
     self.tree = self.best_solution(board)
-
-  def best_solution(self,board,depth=0,current_move=None): ## output tree obj
+    
+  def best_solution(self, board, depth=0, current_move=None, alpha=-sys.maxsize, beta=sys.maxsize): ## output tree obj
     # board obj contain (is_win_or_lose function ,legal_moves function , place_piece function)
     current_status = board.is_win_or_lose()
     result = Tree(0,current_move)
     is_my_action = True
+
     if depth %2 == 0:
       is_my_action = True
     else:
       is_my_action = False
+
     if current_status == "win":
       result.value =  1
     elif current_status == "lose":
@@ -39,6 +42,7 @@ class Mini_max:
       for e in board.legal_moves():
         sub_board = board.place_piece(e,is_my_action)
         child_member = self.best_solution(sub_board,depth+1,e)
+        # child_member.value = 0
         result.add_child(child_member)
       if depth % 2 == 0:
         result.value = max(result.children, key=lambda item: item.value).value
