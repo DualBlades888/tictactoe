@@ -21,7 +21,7 @@ class Mini_max:
   def __init__(self,board):
     self.tree = self.best_solution(board)
     
-  def best_solution(self, board, depth=0, current_move=None, alpha=-sys.maxsize, beta=sys.maxsize): ## output tree obj
+  def best_solution(self, board, depth=0, current_move=None, alpha = -sys.maxsize, beta=sys.maxsize): ## output tree obj
     # board obj contain (is_win_or_lose function ,legal_moves function , place_piece function)
     current_status = board.is_win_or_lose()
     result = Tree(0,current_move)
@@ -41,9 +41,15 @@ class Mini_max:
     else:
       for e in board.legal_moves():
         sub_board = board.place_piece(e,is_my_action)
-        child_member = self.best_solution(sub_board,depth+1,e)
+        child_member = self.best_solution(sub_board,depth+1,e,alpha,beta)
         # child_member.value = 0
+        if is_my_action and child_member.value > alpha:
+          alpha = child_member.value
+        if is_my_action == False and child_member.value < beta:
+          beta = child_member.value
         result.add_child(child_member)
+        if alpha > beta:
+            break
       if depth % 2 == 0:
         result.value = max(result.children, key=lambda item: item.value).value
       if depth % 2 == 1:
