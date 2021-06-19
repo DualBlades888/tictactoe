@@ -76,7 +76,8 @@ class State:
         output += '\n'
     return output
 
-  #################### Minimax functions ########################## 
+  #################### Minimax functions,mcs function ########################## 
+
   def place_piece(self,action,is_my_action):
     return self.next(action,is_my_action)
   def legal_moves(self):
@@ -90,7 +91,13 @@ class State:
       elif self.is_draw():
         return 'draw'
     return 'not finished'
-def player_vs_computer(board,tactic_book):
+  #####################pvp functions##############################
+  def switch_state(self):
+    return State(self.enemy_pieces,self.pieces)
+
+
+
+def player_vs_minimax(board,tactic_book):
   while board.is_win_or_lose() == "not finished":
     smart_moves = tactic_book.get_children_by_value()
     children_pos = random.randint(0, len(smart_moves)-1)
@@ -102,12 +109,60 @@ def player_vs_computer(board,tactic_book):
     tactic_book = tactic_book.get_child_by_move(human_move)
     print(board)
     print(board.is_win_or_lose())
+def mcs_vs_player(board):
+  mcs_tree = mcs.Mcs_tree(board)
+  while board.is_win_or_lose() == "not finished":
+    mcs_move = mcs_tree.mcs_main(board)
+    board = board.place_piece(mcs_move,True)
+    print(board)
+    human_move = int(input())
+    board = board.place_piece(human_move,False)
+    print(board)
+
+def mcs_vs_minimax(board,tactic_book):
+  tactic_book_fight = tactic_book
+  mcs_score = 0
+  mcs_tree = mcs.Mcs_tree(board)
+  for e in range(20):
+    board = State()
+    tactic_book = tactic_book_fight
+    while board.is_win_or_lose() == "not finished":
+      smart_moves = tactic_book.get_children_by_value()
+      children_pos = random.randint(0, len(smart_moves)-1)
+      board = board.place_piece(smart_moves[children_pos].move,True)
+      tactic_book = smart_moves[children_pos]
+
+      #print(board)
+      if board.is_win_or_lose() != "not finished":
+        if board.is_win_or_lose() == 'lose':
+          mcs_score += 1
+        if board.is_win_or_lose() == 'draw':
+          mcs_score += 0.5
+        break
+      board = board.switch_state()
+
+      mcs_move = mcs_tree.mcs_main(board)
+      board = board.place_piece(mcs_move,True)
+      tactic_book = tactic_book.get_child_by_move(mcs_move)
+      
+      board = board.switch_state()
+      #print(board)
+      if board.is_win_or_lose() != "not finished":
+        if board.is_win_or_lose() == 'lose':
+          mcs_score += 1
+        if board.is_win_or_lose() == 'draw':
+          mcs_score += 0.5
+        break
+    print(e+1)
+  print(mcs_score)
 if __name__ == "__main__":
+  import mcs
   import mini_max
   board = State()
-  test_board = State([1, 0, 0, 1, 0, 0, 0, 1, 0],[0, 0, 0, 0, 1, 0, 1, 0, 1])
-  print(test_board.is_win_or_lose())
-  tactic_book = mini_max.Mini_max(board).tree
-  player_vs_computer(board,tactic_book)  
+  #tactic_book = mini_max.Mini_max(board).tree
+  # player_vs_computer(board,tactic_book)  
+  #mcs_vs_tacticbook(board,tactic_book)
+  #mcs_vs_minimax(board,tactic_book)
+  mcs_vs_player(board)
 
   

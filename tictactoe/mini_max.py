@@ -54,5 +54,4 @@ class Mini_max:
         result.value = max(result.children, key=lambda item: item.value).value
       if depth % 2 == 1:
         result.value = min(result.children, key=lambda item: item.value).value
-    return result 
-     
+    return result
